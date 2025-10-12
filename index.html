@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数字1-100介绍网页</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .controls {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .search-box {
+            display: inline-block;
+            margin-right: 20px;
+        }
+
+        input[type="number"] {
+            padding: 10px 15px;
+            font-size: 16px;
+            border: none;
+            border-radius: 25px;
+            width: 100px;
+            text-align: center;
+            outline: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        button:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+        }
+
+        .numbers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .number-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px 10px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .number-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .number-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s;
+        }
+
+        .number-card:hover::before {
+            left: 100%;
+        }
+
+        .number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .number-info {
+            font-size: 0.8em;
+            color: #666;
+            line-height: 1.3;
+        }
+
+        .special-number {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            color: white;
+        }
+
+        .special-number .number {
+            color: white;
+        }
+
+        .special-number .number-info {
+            color: rgba(255,255,255,0.9);
+        }
+
+        .prime-number {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+        }
+
+        .even-number {
+            border-left: 4px solid #4ecdc4;
+        }
+
+        .odd-number {
+            border-left: 4px solid #ffe66d;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 20px;
+            width: 80%;
+            max-width: 500px;
+            text-align: center;
+            position: relative;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            position: absolute;
+            right: 15px;
+            top: 15px;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .numbers-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+                gap: 10px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .number-card {
+                padding: 15px 8px;
+            }
+            
+            .number {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔢 数字1-100世界</h1>
+            <p class="subtitle">探索数字的奥秘与趣味知识</p>
+        </header>
+
+        <div class="controls">
+            <div class="search-box">
+                <input type="number" id="numberSearch" min="1" max="100" placeholder="输入数字">
+            </div>
+            <button onclick="showNumberDetail()">查看详情</button>
+            <button onclick="generateAllNumbers()" style="background: #4ecdc4; margin-left: 10px;">重新生成</button>
+        </div>
+
+        <div class="numbers-grid" id="numbersGrid">
+            <!-- 数字卡片将通过JavaScript生成 -->
+        </div>
+    </div>
+
+    <!-- 模态框 -->
+    <div id="numberModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // 数字的特殊属性数据
+        const numberData = {
+            1: { name: "一", special: "最小的正整数，乘法单位元", facts: ["最小的自然数", "任何数乘以1都等于它本身"] },
+            2: { name: "二", special: "最小的质数，唯一的偶质数", facts: ["最小的质数", "唯一的偶质数", "自然界中常见的对称数"] },
+            3: { name: "三", special: "第一个奇质数，三角形的基础", facts: ["第一个奇质数", "稳定的三角形结构", "许多文化中的神圣数字"] },
+            4: { name: "四", special: "第一个合数", facts: ["第一个合数", "在中文中有'死'的谐音", "正方形有4条边"] },
+            5: { name: "五", special: "人类手指数量", facts: ["人类一只手的手指数量", "五边形有5条边", "五行学说"] },
+            6: { name: "六", special: "完全数（1+2+3=6）", facts: ["最小的完全数", "1+2+3=6", "六边形结构稳定"] },
+            7: { name: "七", special: "幸运数字，在许多文化中都很重要", facts: ["西方文化中的幸运数字", "一周有7天", "彩虹有7种颜色"] },
+            8: { name: "八", special: "无限符号的形状", facts: ["中文中代表发财", "无限符号∞的形状", "八面体有8个面"] },
+            9: { name: "九", special: "最大的个位数", facts: ["最大的个位数", "中文中与'久'谐音", "九九乘法表"] },
+            10: { name: "十", special: "十进制的基础", facts: ["十进制计数系统的基础", "10个手指计数的结果"] },
+            11: { name: "十一", special: "回文数", facts: ["回文数", "在许多文化中有特殊意义"] },
+            12: { name: "十二", special: "一年有12个月", facts: ["一年有12个月", "一天有12时辰", "12生肖"] },
+            13: { name: "十三", special: "西方文化中的不吉利数字", facts: ["西方文化中的不吉利数字", "十三恐惧症"] },
+            15: { name: "十五", special: "三角形数", facts: ["三角形数", "1+2+3+4+5=15"] },
+            16: { name: "十六", special: "完全平方数", facts: ["4的平方", "计算机中常用的16进制"] },
+            18: { name: "十八", special: "成年的年龄", facts: ["在中国表示成年", "18岁是法定成年年龄"] },
+            20: { name: "二十", special: "玛雅数字系统的基础", facts: ["玛雅数字系统的基础", "20进制"] },
+            21: { name: "二十一", special: "21点游戏", facts: ["21点扑克游戏", "21是3×7"] },
+            24: { name: "二十四", special: "一天24小时", facts: ["一天有24小时", "24节气"] },
+            25: { name: "二十五", special: "5的平方", facts: ["5的平方", "25美分硬币"] },
+            28: { name: "二十八", special: "闰年二月天数", facts: ["闰年二月有28或29天", "28是完美数之一"] },
+            30: { name: "三十", special: "一个月大约的天数", facts: ["一个月大约30天", "30是多个质数的倍数"] },
+            36: { name: "三十六", special: "36计", facts: ["中国三十六计", "36是6的平方"] },
+            40: { name: "四十", special: "重要的时间周期", facts: ["圣经中的40天", "重要的时间周期"] },
+            45: { name: "四十五", special: "三角形数", facts: ["三角形数", "1+2+...+9=45"] },
+            49: { name: "四十九", special: "7的平方", facts: ["7的平方", "49天在佛教中有特殊意义"] },
+            50: { name: "五十", special: "半百", facts: ["半百之年", "50%是一半"] },
+            55: { name: "五十五", special: "斐波那契数列", facts: ["斐波那契数列中的数"] },
+            60: { name: "六十", special: "时间系统的基础", facts: ["一分钟60秒", "一小时60分钟", "巴比伦60进制"] },
+            64: { name: "六十四", special: "国际象棋棋盘格数", facts: ["国际象棋棋盘8×8=64格", "64是8的平方"] },
+            72: { name: "七十二", special: "重要的数学常数", facts: ["72在金融学中有应用", "72法则"] },
+            81: { name: "八十一", special: "9的平方", facts: ["9的平方", "81是3的4次方"] },
+            88: { name: "八十八", special: "中文中代表发财", facts: ["中文中88代表发财", "两个8连在一起"] },
+            90: { name: "九十", special: "直角", facts: ["直角是90度", "几何中的重要角度"] },
+            91: { name: "九十一", special: "三角形数", facts: ["三角形数", "1+2+...+13=91"] },
+            96: { name: "九十六", special: "高度合数", facts: ["高度合数", "有很多因数"] },
+            99: { name: "九十九", special: "接近完美", facts: ["接近100", "99个银币的故事"] },
+            100: { name: "一百", special: "百分数，完整的象征", facts: ["百分数基础", "完整的象征", "100分代表完美"] }
+        };
+
+        // 生成所有数字卡片
+        function generateAllNumbers() {
+            const grid = document.getElementById('numbersGrid');
+            grid.innerHTML = '';
+
+            for (let i = 1; i <= 100; i++) {
+                const card = createNumberCard(i);
+                grid.appendChild(card);
+            }
+        }
+
+        // 创建数字卡片
+        function createNumberCard(num) {
+            const card = document.createElement('div');
+            card.className = 'number-card';
+            card.onclick = () => showNumberModal(num);
+
+            // 判断数字类型
+            let cardClass = '';
+            if (isPrime(num)) {
+                cardClass += ' prime-number';
+            }
+            if (num % 2 === 0) {
+                cardClass += ' even-number';
+            } else {
+                cardClass += ' odd-number';
+            }
+            
+            // 特殊数字
+            if (numberData[num]) {
+                cardClass += ' special-number';
+            }
+
+            card.className += cardClass;
+
+            const data = numberData[num] || {};
+            const special = data.special || getSpecialDescription(num);
+            const facts = data.facts || getDefaultFacts(num);
+
+            card.innerHTML = `
+                <div class="number">${num}</div>
+                <div class="number-info">
+                    ${special}<br>
+                    <small>${facts[0] || ''}</small>
+                </div>
+            `;
+
+            return card;
+        }
+
+        // 判断是否为质数
+        function isPrime(num) {
+            if (num < 2) return false;
+            for (let i = 2; i <= Math.sqrt(num); i++) {
+                if (num % i === 0) return false;
+            }
+            return true;
+        }
+
+        // 获取特殊描述
+        function getSpecialDescription(num) {
+            if (num <= 10) return `${num} 是基础数字`;
+            if (num % 10 === 0) return `${num} 是整十数`;
+            if (isPrime(num)) return '质数';
+            if (num % 5 === 0) return '5的倍数';
+            if (num % 10 === 5) return '以5结尾的数字';
+            return '普通数字';
+        }
+
+        // 获取默认事实
+        function getDefaultFacts(num) {
+            return [`数字${num}`, `它是${num > 50 ? '大于50' : '小于等于50'}的数字`];
+        }
+
+        // 显示数字详情模态框
+        function showNumberModal(num) {
+            const modal = document.getElementById('numberModal');
+            const content = document.getElementById('modalContent');
+            const data = numberData[num] || {};
+
+            let html = `
+                <h2 style="color: #667eea; margin-bottom: 20px;">数字 ${num}</h2>
+                <div style="font-size: 3em; font-weight: bold; color: #667eea; margin: 20px 0;">
+                    ${num}
+                </div>
+            `;
+
+            if (data.name) {
+                html += `<p><strong>中文名称：</strong>${data.name}</p>`;
+            }
+
+            if (data.special) {
+                html += `<p><strong><span class="highlight">特殊属性：</span></strong>${data.special}</p>`;
+            }
+
+            if (data.facts && data.facts.length > 0) {
+                html += '<p><strong><span class="highlight">有趣事实：</span></strong></p>';
+                html += '<ul style="text-align: left; margin: 15px 0;">';
+                data.facts.forEach(fact => {
+                    html += `<li>• ${fact}</li>`;
+                });
+                html += '</ul>';
+            }
+
+            // 添加数学信息
+            html += '<p><strong><span class="highlight">数学信息：</span></strong></p>';
+            html += `<p>• 类型：${num % 2 === 0 ? '<span style="color: #4ecdc4;">偶数</span>' : '<span style="color: #ffe66d;">奇数</span>'}</p>`;
+            html += `<p>• 质数：${isPrime(num) ? '<span style="color: #4ecdc4;">是</span>' : '<span style="color: #ff6b6b;">否</span>'}</p>`;
+            
+            if (num % 10 === 0) {
+                html += `<p>• 整十数：${num / 10} × 10</p>`;
+            }
+            
+            if (num > 1 && !isPrime(num)) {
+                const factors = getFactors(num);
+                if (factors.length > 2) {
+                    html += `<p>• 因数：${factors.join(', ')}</p>`;
+                }
+            }
+
+            content.innerHTML = html;
+            modal.style.display = 'block';
+        }
+
+        // 获取因数
+        function getFactors(num) {
+            const factors = [];
+            for (let i = 1; i <= num; i++) {
+                if (num % i === 0) {
+                    factors.push(i);
+                }
+            }
+            return factors.slice(0, 6); // 只显示前6个因数
+        }
+
+        // 显示单个数字详情
+        function showNumberDetail() {
+            const input = document.getElementById('numberSearch');
+            const num = parseInt(input.value);
+
+            if (num >= 1 && num <= 100) {
+                showNumberModal(num);
+                input.value = '';
+            } else {
+                alert('请输入1-100之间的数字！');
+            }
+        }
+
+        // 关闭模态框
+        function closeModal() {
+            document.getElementById('numberModal').style.display = 'none';
+        }
+
+        // 点击模态框外部关闭
+        window.onclick = function(event) {
+            const modal = document.getElementById('numberModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // 键盘事件
+        document.getElementById('numberSearch').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                showNumberDetail();
+            }
+        });
+
+        // 页面加载时生成数字
+        document.addEventListener('DOMContentLoaded', function() {
+            generateAllNumbers();
+        });
+    </script>
+</body>
+</html>
